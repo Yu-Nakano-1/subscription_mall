@@ -15,7 +15,7 @@ Devise.setup do |config|
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
   # config.secret_key = '44f6ccd74da33399079a9c2e025d6229c1bbbf75412728af810119cfe51b46e6c76baddb61a121f0fc48a4dacb46b5e87d3eea5186371bdd09c8db0d2af04724'
-
+  config.secret_key = 'a775343469b6ff775b3940882cd50b862b3c6bba8c734948150cde80128cfdb7b30127385ddd6c0ce9a4becf7fdd56561b76450f3e5a484e573b9a87908ec1e0'
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
@@ -272,11 +272,11 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth :facebook, ENV['FACEBOOK_ID'], ENV['FACEBOOK_SECRET_KEY']
-  config.omniauth :twitter, ENV['TWITTER_API_KEY'], ENV['TWITTER_API_SECRET']
-  config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET']
-  config.omniauth :line, ENV['LINE_KEY'], ENV['LINE_SECRET']
-  config.omniauth :instagram, ENV['INSTAGRAM_KEY'], ENV['INSTAGRAM_SECRET']
+  # config.omniauth :facebook, ENV['FACEBOOK_ID'], ENV['FACEBOOK_SECRET_KEY']
+  # config.omniauth :twitter, ENV['TWITTER_API_KEY'], ENV['TWITTER_API_SECRET']
+  #config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET']
+  # config.omniauth :line, ENV['LINE_KEY'], ENV['LINE_SECRET']
+  #config.omniauth :instagram, ENV['INSTAGRAM_KEY'], ENV['INSTAGRAM_SECRET']
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.

@@ -1,14 +1,34 @@
 class CategoriesController < ApplicationController
-  before_action :set_category, only: [:like_lunch, :edit, :update, :destroy]
+  before_action :set_category, only: [:like_lunch]
+  # before_action :set_subscription, only: [:show]
+  before_action :categories_lock, only: %i(new edit)
+  before_action :current_user_email_present?, only: %i(trial_shop)
+
 
   def index
-    @categories = Category.where.not(name: nil)
-    @categories_name = Category.where.not(name: nil)
+    @category_all = Category.all
+  end
+
+  def like_lunch
+    @subscriptions = @category.subscriptions.where(admin_subscription_check: "承認")
+    @private_stores = @category.private_stores.where(admin_private_check: "承認")
+    @subscriptions = @category.subscriptions
+    @private_stores = @category.private_stores
+    if current_user.present?
+      current_user.update!(select_trial: false)  if current_user.plan_canceled || (!current_user.trial_stripe_success && current_user.select_trial)
+    end
+  end
+
+  def trial_shop
+    @subscriptions = Subscription.where(trial: true)
+    @private_stores = PrivateStore.where(trial: true)
+    if current_user.present?
+      current_user.update!(select_trial: true) if current_user.price.blank?
+    end
   end
 
   def create
     @category = Category.new(category_params)
-
     respond_to do |format|
       if @category.save
         format.html { redirect_to @category, notice: 'Category was successfully created.' }
@@ -41,130 +61,22 @@ class CategoriesController < ApplicationController
   end
 
   def search
-    @categories = Category.where.not(name: nil)
+    if params[:category_id].present?
+      redirect_to like_lunch_category_url(params[:category_id])
+    else
+      redirect_to categories_url
+    end
   end
 
-  def like_lunch
-  end
 
   def shop_list
-    @subscriptions = Subscription.all
+    @subscriptions = Subscription.where(recommend: true).order(created_at: :asc).paginate(page: params[:page], per_page: 10)
+    @private_stores = PrivateStore.all.order(created_at: :asc).paginate(page: params[:page], per_page: 10)
   end
 
   def recommend
-    @subscriptions = Subscription.where(monthly_fee: "19800").order(created_at: :desc).limit(15)
-  end
-
-  def washoku
-    @subscriptions = Subscription.order("RAND()").where(category_name: "和食")
-  end
-
-  def teishoku
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "定食屋")
-  end
-
-  def ramen
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "らーめん")
-  end
-
-  def cafe
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "カフェ")
-  end
-
-  def pan
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "パン屋")
-  end
-
-  def izakaya
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "居酒屋")
-  end
-
-  def itarian
-    @subscriptions = Subscription.order("RAND()").where(category_name: "イタリアン")
-  end
-
-  def chuuka
-    @subscriptions = Subscription.order("RAND()").where(category_name: "中華")
-  end
-
-  def french
-    @subscriptions = Subscription.order("RAND()").where(category_name: "フレンチ")
-  end
-
-  def hawaian
-    @subscriptions = Subscription.order("RAND()").where(category_name: "ハワイアン")
-  end
-
-  def tonanajia
-    @subscriptions = Subscription.order("RAND()").where(category_name: "東南アジア料理")
-  end
-
-  def bar
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "BAR")
-  end
-
-  def cake
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "ケーキ")
-  end
-
-  def yakiniku
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "焼肉")
-  end
-
-  def yoshoku
-    @subscriptions = Subscription.order("RAND()").where(category_name: "洋食")
-  end
-
-  def curry
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "カレー")
-  end
-
-  def humburger
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "バーガー")
-  end
-
-  def kankokuryori
-    @subscriptions = Subscription.order("RAND()").where(category_name: "韓国料理")
-  end
-
-  def restaurant
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "レストラン")
-  end
-
-  def okonomiyaki
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "お好み焼き")
-  end
-
-  def nabe
-    @subscriptions = Subscription.order("RAND()").where(category_name: "鍋")
-  end
-
-  def sweets
-    @subscriptions = Subscription.order("RAND()").where(category_name: "スイーツ")
-  end
-
-  def karaage
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "唐揚げ")
-  end
-
-  def gyouza
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "餃子")
-  end
-
-  def don
-    @subscriptions = Subscription.order("RAND()").where(category_name: "丼モノ")
-  end
-
-  def udon
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "うどん")
-  end
-
-  def soba
-    @subscriptions = Subscription.order("RAND()").where(category_genre: "そば")
-  end
-
-  def other
-    @subscriptions = Subscription.order("RAND()").where(category_name: "その他")
+    @subscriptions = Subscription.where(recommend: true).order(created_at: :asc).paginate(page: params[:page], per_page: 10)
+    @private_stores = PrivateStore.where(recommend: true).where(admin_private_check: "個人店舗データ反映済み").order(created_at: :asc).paginate(page: params[:page], per_page: 10)
   end
 
   private
@@ -173,8 +85,19 @@ class CategoriesController < ApplicationController
       @category = Category.find(params[:id])
     end
 
+    def set_subscription
+      @subscription = Subscription.find(params[:id])
+    end
+
+
     # Only allow a list of trusted parameters through.
     def category_params
       params.require(:category).permit(:name, :image_category, :user_id, :owner_id)
+    end
+
+    def categories_lock
+      unless current_admin.present?
+        redirect_to root_url, notice: '権限がありません'
+      end
     end
 end

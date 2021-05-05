@@ -1,8 +1,8 @@
 <header>
-<% if signed_in? %> <%# ログインしているかどうか %>
- <% if current_owner.present? %> <%# オーナーでログインしているかどうか %>
-    <div class="container-fluid"> 
-      <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
+  <% if signed_in? %> <%# ログインしているかどうか %>
+    <% if current_owner.present? %> <%# オーナーでログインしているかどうか %>
+      <div class="container-fluid">
+        <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
         <nav class="navbar navbar-expand-lg" style="background-color:transparent;">
           <%= link_to image_tag("gurumelogo.jpeg", :size =>'260x100'), "/", class:"gurumelogo" %>
           <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-navi" aria-controls="bs-navi" aria-expanded="false"    aria-label="Toggle navigation">
@@ -11,20 +11,44 @@
 
           <div class="collapse navbar-collapse justify-content-end" id="bs-navi">
             <ul class="navbar-nav">
-              <li class="plan"><a href="plan_description">プラン</a></li>
-              <li class="recommend"><a href="categories/recommend">おすすめ店舗</a></li>
-              <li><%= link_to "利用者様管理", users_path %></li>
-              <li><%= link_to "ショップ開設", new_owner_subscription_path(current_owner) %></li>
-              <li><%= link_to "マイアカウント", owner_account_owner_path(current_owner) %></li>
-              <li><%= link_to "ログアウト", destroy_owner_session_path, method: :delete %></li>
+              <li class="login"><%= link_to "ショップ開設", subscription_private_store_select_owner_path(current_owner) %></li>
+              <li class="new-user"><%= link_to "マイアカウント", owner_account_owner_path(current_owner) %></li>
+              <li class="logout"><%= link_to "ログアウト", destroy_owner_session_path, method: :delete %></li>
             </ul>
           </div>
         </nav>
-      <%= video_tag("/videos/production ID_3977086 (3).mp4", autoplay: :true, loop: :true, muted: :true, class: 'video-content') %>
-    </div> 
- <% elsif current_user.present? %> <%# 会員ユーザーでログインしているかどうか %>
-    <div class="container-fluid"> 
-      <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
+        <%= video_tag("/videos/production ID_3977086.mp4", autoplay: :true, loop: :true, muted: :true) %>
+        <div class="text-sub-center-top owner-btn">
+          <h1 class="text1">　おいしいお店巡り<br>嬉しいお家外食</h1>
+          <p class="text2">手抜きじゃない！！時短で楽してお家でも手軽に</p>
+          <p class="text2">厳選されたお店で楽しくおいしい食事を</p>
+        </div>
+      </div>
+    <% elsif current_user.present? %> <%# 会員ユーザーでログインしているかどうか %>
+      <div class="container-fluid">
+        <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
+        <nav class="navbar navbar-expand-lg navbar-right" style="background-color:transparent;">
+          <%= link_to image_tag("gurumelogo.jpeg", :size =>'260x100'), "/", class:"gurumelogo" %>
+          <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-navi" aria-controls="bs-navi" aria-expanded="false"    aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="bs-navi">
+            <ul class="navbar-nav navbar-right">
+              <li class="new-user"><%= link_to " Myアカウント", user_account_user_path(current_user) %></li>
+              <li class="logout"><%= link_to "ログアウト", destroy_user_session_path, method: :delete %></li>
+            </ul>
+          </div>
+        </nav>
+        <%= video_tag("/videos/production ID_3977086.mp4", autoplay: :true, loop: :true, muted: :true) %>
+        <div class="text-sub-center-top owner-btn">
+          <h1 class="text1">　おいしいお店巡り<br>嬉しいお家外食</h1>
+          <p class="text2">手抜きじゃない！！時短で楽してお家でも手軽に</p>
+          <p class="text2">厳選されたお店で楽しくおいしい食事を</p>
+        </div>
+      </div>
+    <% elsif current_admin.present? %> <%# 管理者でログインしているかどうか %>
+      <div class="container-fluid">
+        <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
         <nav class="navbar navbar-expand-lg" style="background-color:transparent;">
           <%= link_to image_tag("gurumelogo.jpeg", :size =>'260x100'), "/", class:"gurumelogo" %>
           <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-navi" aria-controls="bs-navi" aria-expanded="false"    aria-label="Toggle navigation">
@@ -33,61 +57,48 @@
 
           <div class="collapse navbar-collapse justify-content-end" id="bs-navi">
             <ul class="navbar-nav">
-              <li class="plan"><a href="plan_description">プラン</a></li>
-              <li class="recommend"><a href="categories/recommend">おすすめ店舗</a></li>
-              <li><%= link_to "ログアウト", destroy_user_session_path, method: :delete %></li>
-              <li><%= link_to "Myアカウント", user_account_user_path(current_user) %></li>
+              <li class="login"><%= link_to "経営者様管理", admins_owner_private_store_select_path %></li>
+              <li class="login"><%= link_to "利用者様管理", users_path %></li>
+              <li class="login"><%= link_to "マイアカウント", account_admin_path(current_admin) %></li>
+              <li class="logout"><%= link_to "ログアウト", destroy_admin_session_path, method: :delete %></li>
             </ul>
           </div>
         </nav>
-      <%= video_tag("/videos/production ID_3977086 (3).mp4", autoplay: :true, loop: :true, muted: :true, class: 'video-content') %>
-    </div> 
- <% elsif current_admin.present? %> <%# 管理者でログインしているかどうか %>
-    <div class="container-fluid"> 
+        <%= video_tag("/videos/production ID_3977086.mp4", autoplay: :true, loop: :true, muted: :true) %>
+        <div class="text-sub-center-top owner-btn">
+          <h1 class="text1">　おいしいお店巡り<br>嬉しいお家外食</h1>
+          <p class="text2">手抜きじゃない！！時短で楽してお家でも手軽に</p>
+          <p class="text2">厳選されたお店で楽しくおいしい食事を</p>
+        </div>
+      </div>
+    <% end %>
+
+
+  <% else %> <%# ログインしてない %>
+    <div class="container-fluid">
       <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
-        <nav class="navbar navbar-expand-lg" style="background-color:transparent;">
-          <%= link_to image_tag("gurumelogo.jpeg", :size =>'260x100'), "/", class:"gurumelogo" %>
-          <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-navi" aria-controls="bs-navi" aria-expanded="false"    aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse justify-content-end" id="bs-navi">
-            <ul class="navbar-nav">
-              <li class="plan"><a href="plan_description">プラン</a></li>
-              <li class="recommend"><a href="categories/recommend">おすすめ店舗</a></li>
-              <li><%= link_to "ログアウト", destroy_admin_session_path, method: :delete %></li>
-              <li><%= link_to "経営者様管理", owners_path %></li>
-              <li><%= link_to "利用者様管理", users_path %></li>
-              <li><%= link_to "マイアカウント", admin_account_admin_path(current_admin) %></li>
-            </ul>
-          </div>
-        </nav>
-      <%= video_tag("/videos/production ID_3977086 (3).mp4", autoplay: :true, loop: :true, muted: :true, class: 'video-content') %>
-    </div>
-  <% end %> 
- 
-
-<% else %> <%# ログインしてない %>
-  <div class="container-fluid"> 
-    <meta name=”viewport” content=”width=device-width,initial-scale=1.0″>
       <nav class="navbar navbar-expand-lg" style="background-color:transparent;">
         <%= link_to image_tag("gurumelogo.jpeg", :size =>'260x100'), "/", class:"gurumelogo" %>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#bs-navi" aria-controls="bs-navi" aria-expanded="false"    aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse justify-content-end" id="bs-navi">
           <ul class="navbar-nav">
-            <li class="plan"><a href="plan_description">プラン</a></li>
-            <li class="recommend"><a href="categories/recommend">おすすめ店舗</a></li>
-            <li class="login"><%= link_to "ログイン", new_user_session_path %></li>
-            <li class="new-user"><%= link_to "会員登録", new_user_registration_path %></li>
+            <li class="login"><a href="/users/sign_in">ログイン</a></li></br>
+            <li class="new-user"><a href="/users/sign_up">会員登録</a></li>
           </ul>
         </div>
       </nav>
-    <%= video_tag("/videos/production ID_3977086 (3).mp4", autoplay: :true, loop: :true, muted: :true, class: 'video-content') %>
-  </div>
-<% end %>
-    <h1 class="text-center">巡グルメで始めるサブスクランチ。</h1>
-    <p class="text-sub-center lead grey-text mx-auto mb-5">好きなランチを好きな場所で毎日食べ歩こう!</p>
+      <%= video_tag("/videos/production ID_3977086.mp4", autoplay: :true, loop: :true, muted: :true) %>
+      <div class="text-sub-center-top owner-btn">
+        <div class="row">
+          <div class="col-sm-12">
+            <h1 class="text1">　おいしいお店巡り<br>嬉しいお家外食</h1>
+            <p class="text2">手抜きじゃない！！時短で楽してお家でも手軽に</p>
+            <p class="text2">厳選されたお店で楽しくおいしい食事を</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </header>

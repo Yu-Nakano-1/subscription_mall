@@ -1,0 +1,66 @@
+<% provide(:title, '個人店サブスク管理') %>
+
+<p id="notice"><%= notice %></p>
+<div>
+  <h1 class="brand-color display-4 mt-6 mb-6">個人店舗一覧</h1>
+
+  <div class="col-sm-12">
+
+    <table class="table table-condensed table-hover my-5" id="table-users">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>店舗状況</th>
+          <th></th>
+          <th>トライアル状態</th> 
+          <th>個人店舗名</th>
+          <th>金額</th>
+          <th>オーナ―ID</th>
+          <th>オーナーE-mail</th>
+          <th>オーナー名</th>
+        </tr>
+      </thead>
+
+      <% @private_stores.each do |private_store| %>
+        <tr>
+          <td><%= private_store.id %></td>
+          <td>
+            <span class="badge badge-info">
+              <% if private_store.situation == "個人店承認済み" %>
+                <%= private_store.situation %>
+              <% elsif private_store.situation == "個人店否認済み" %>
+                <%= private_store.situation %>
+              <% elsif private_store.situation == "個人店申請中" %>
+                <%= private_store.situation %>
+              <% end %>
+            </span>
+          </td>
+          <td><%= link_to "審査", private_owner_edit_admin_path(owner_id: private_store.owner_id, id: private_store.id), class: "btn-gradient-3d-simple" %></td>
+          <td>
+            <% if private_store.admin_private_check == "承認" %>
+              <% if private_store.trial == false %>
+                <%= "不参加" %>
+              <% elsif private_store.trial == true %>
+                <%= "参加" %>
+              <% else %>
+                <%= "未設定" %>
+              <% end %>
+            <% end %>
+          </td>
+          <td><%= link_to "#{private_store.name}", owner_private_store_path(owner_id: private_store.owner_id, id: private_store.id) %></td>
+          <td><%= link_to "#{private_store.price}", private_owner_edit_admin_path(owner_id: private_store.owner_id, id: private_store.id) %></td>
+          <td><%= private_store.owner.id %></td>
+          <td><%= private_store.owner.email %></td>
+          <td><%= private_store.owner.name %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+  <div class="private-store-show-btn">
+    <%= link_to admins_owner_private_store_select_path, class: "btn btn--blue btn-md btn--shadow" do %>
+      <i class="fas fa-reply"> 戻る</i>
+    <% end %>
+  </div>
+  <%= will_paginate(@private_stores, class: "pagination justify-content-center mt-6 mb-7", renderer: WillPaginate::ActionView::Bootstrap4LinkRenderer) %>
+</div>
+

@@ -1,5 +1,6 @@
 class SuportsController < ApplicationController
   before_action :set_suport, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_owner_or_admin!
 
   # GET /suports
   # GET /suports.json
@@ -24,6 +25,7 @@ class SuportsController < ApplicationController
     # メール送信
     @suport = Suport.new(params[:suport].permit(:name, :email, :message))
     SuportMailer.suport_email(@suport).deliver
+    SuportMailer.get_suport_email(@suport).deliver
 
     # 完了画面を表示
     render :action => 'thanks'

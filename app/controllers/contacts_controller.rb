@@ -1,5 +1,7 @@
 class ContactsController < ApplicationController
   # before_action :set_contact, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user_or_admin!
+
 
   # GET /contacts
   # GET /contacts.json
@@ -24,7 +26,7 @@ class ContactsController < ApplicationController
     # メール送信
     @contact = Contact.new(params[:contact].permit(:name, :email, :message))    
     ContactMailer.contact_email(@contact).deliver
-
+    ContactMailer.get_contact_email(@contact).deliver
     # 完了画面を表示
     render :action => 'thanks'
   end

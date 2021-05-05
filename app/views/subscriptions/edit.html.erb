@@ -1,50 +1,183 @@
 <% provide(:title, "サブスクページ編集") %>
 
-<h1>サブスクページ編集</h1>
+<h1 class="brand-color display-4 mt-6 mb-6">加盟店サブスクページ編集</h1>
 
-<%= form_with(model: @subscription, url: owner_subscription_path, local: true) do |form| %>
+<%= form_with(model: @subscription, url: owner_subscription_path(@subscription, owner_id: @owner.id), multipart: true, local: true) do |form| %>
   <%= render 'shared/error_messages' , object: @subscription %>
 
   <%= form.hidden_field :owner_id, :value => @owner.id %>
-  <!--%= form.hidden_field :shop_id, :value => @shop.id %-->
 
   <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name, id: :subscription_name, placeholder: "例)", class: 'form-control' %>
+    <%= form.label :お店の名前 %> <span class="must">必須</span>
+    <%= form.text_field :name, :required => true, class: 'form-control form_border' %>
   </div>
 
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title, id: :subscription_title, placeholder: "例)", class: 'form-control' %>
+    <%= form.label :サイトURL %> <span class="must">必須</span><br/>
+    <%= form.text_field :site, :required => true, class: 'form-control' %>
   </div>
 
   <div class="field">
-    <%= form.label :detail %>
-    <%= form.text_area :detail, id: :subscription_detail, placeholder: "例)", class: 'form-control' %>
+    <%= form.label :サブスク料理名 %> <span class="must">必須</span>
+    <%= form.text_field :title, :required => true, id: :subscription_title, class: 'form-control form_border' %>
   </div>
 
   <div class="field">
-    <%= form.fields_for :images do |f_img|%>
-      <%= f_img.label :サブスク写真 %>
-      <%= f_img.file_field :image_subscription_id, multiple: true %>
-    <% end %>
+    <%= form.label :お店専用メールアドレス %><span class="must">お客様に公開されるメールアドレスです</span><br/>
+    <%= form.email_field :email, :required => true, placeholder: "sample@gmail.com", autofocus: true, autocomplete: "email", class: 'form-control' %>
   </div>
 
   <div class="field">
-    <%= form.label :subscription_detail %>
-    <%= form.text_area :subscription_detail, id: :subscription_subscription_detail, placeholder: "例)", class: 'form-control' %>
+    <%= form.label :お店専用の電話番号 %> <span>＊(ハイフンなし)連絡がつく番号でお願いします。</span><span class="must">お客様に公開される電話番号です</span><br/>
+    <%= form.telephone_field :phone_number, :required => true, class: 'form-control' %>
   </div>
 
   <div class="field">
-    <%= form.label :category_name %>
-    <%= form.select :category_name, Subscription.category_names.keys, :include_blank => "カテゴリを選択してください", id: :subscription_subscription_detail, class:"form-control" %>
+    <%= form.label :お店の住所 %> <span class="must">必須</span>
+    <%= form.text_field :address, :required => true, class: 'form-control form_border' %>
   </div>
 
+  <div class="field">
+    <%= form.label :商品説明 %> <span class="must">必須</span>
+    <%= form.text_area :detail, :required => true, class: 'form-control form_border' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :"LINE@QRコード画像", for: "file-input", type:"file" %><span class="must">必須</span><br/>
+    <%= form.file_field :qr_image, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :お店トップ紹介写真, for: "file-input", type:"file"%> <span class="must">必須</span><br/>
+    <%= form.file_field :image_subscription, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :店舗情報 %>
+    <%= form.text_area :subscription_detail, :required => true, placeholder: "例)", class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真2, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image2, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真3, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image3, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真4, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image4, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真5, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image5, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真6, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image6, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真7, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image7, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真8, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image8, id: "file-input" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :サブのお店紹介写真9, for: "file-input", type:"file" %><br/>
+    <%= form.file_field :sub_image9, id: "file-input"%>
+  </div>
+
+  <div class="field">
+    <%= form.label :カテゴリ %> <span class="must">必須</span><br/>
+    <%= form.collection_select(:category_id, Category.all, :id, :name, include_blank: "カテゴリを選択してください", :required => true, class: 'form-control') %>
+  </div>
+
+  <%
+=begin%>
+ <div class="field">
+    <%= form.label :プラン %> <span class="must">必須</span><br/>
+    <%= form.collection_select(:price, @pays, :id, :amount, include_blank: "加入するプランを選択", :required => true, class: 'form-control') %>
+  </div> 
+<%
+=end%>
+
+
+  <div class="field">
+    <%= form.label :加入プラン %> <span class="must">必須</span><br/>
+    <%= form.select :price, Subscription.prices.keys, { include_blank: "加入するプランを選択してください"}, class: 'form-control' %>
+  </div>
+ 
+  <div class="field">
+    <%= form.label :trial %>
+    <%= form.select :trial, [['不参加', false],['参加', true]], { selected: false }, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= form.label "テイクアウト" %><br>
+    <%= form.select :takeout, [['不可', false],['可', true]], { selected: @subscription.takeout }, class: 'form-control col-sm-2' %>
+  </div>
+
+  <div class="field">
+    <%= form.label "テイクアウト準備にかかる時間の目安(分)" %>
+    <%= form.number_field :preparation_time, value: @subscription.preparation_time, class: 'form-control col-sm-2' %>
+  </div>
+
+  <div class="field">
+    <%= form.label "デリバリー" %><br>
+    <%= form.select :delivery, [['不可', false],['可', true]], { selected: @subscription.delivery }, class: 'form-control col-sm-2' %>
+  </div>
 
   <div class="actions">
     <%= form.submit %>
   </div>
-<% end %>
+<% end %></br>
 
-<%= link_to 'Show', owner_subscription_path(@subscription, owner_id: @owner.id, shop_id: @subscription.shop_id) %> |
-<%= link_to 'Back', owner_subscriptions_path %>
+<h1>instagram 投稿</h1>
+
+<%= form_with(model: @instablog, url: instablogs_path, local: true) do |form| %>
+
+  <%= form.hidden_field :subscription_id, :value => @subscription.id %>
+
+  <div class="field">
+    <%= form.label :埋め込みコード %>
+    <%= form.text_area :insta_content, placeholder: "こちらにコピーしたinstagram埋め込みコードを添付してください。", class: 'form-control' %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "投稿する" %>
+  </div>
+
+  <%= "※instagram埋め込みコードの取得方法がわからない場合はこちらを参照して下さい。" %> <%= link_to '➡︎(参照資料)', 'https://appllio.com/instagram-embed-code-post', target: :_blank %>
+
+<% end %></br>
+
+<div class="mt-5 mb-8">
+  <%= link_to '詳細', owner_subscription_path(@subscription, owner_id: @owner.id), class: "btn btn-brand" %>
+  <%= link_to '一覧へ', owner_subscriptions_path, class: "btn btn-brand" %>
+</div>
+
+  <%
+=begin%>
+ <div class="field">
+    <%= form.label :カテゴリ %> <span class="must">必須</span><br/>
+    <%= form.collection_check_boxes(:category_ids, Category.all, :id, :name, multiple: true)  do |t| %>
+      <% t.label   { t.check_box + t.text } %>
+    <% end %>
+  </div>
+<%
+=end%>

@@ -1,10 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from:     "巡グルメ",
-          bcc:      "sent@gmail.com",
-          reply_to: "reply@gmail.com"
+  default from: ENV['SEND_MAIL']
   layout 'mailer'
 end
 
-# app/mailers/user_mailer.rb
-class UserMailer < ApplicationMailer
-end

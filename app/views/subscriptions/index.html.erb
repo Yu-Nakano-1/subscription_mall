@@ -1,56 +1,100 @@
 <% provide(:title, "サブスクページ一覧") %>
 <p id="notice"><%= notice %></p>
 
-<h1>サブスクページ一覧</h1>
+<h1 class="brand-color display-4 mt-6 mb-6">加盟サブスクページ一覧</h1>
 
-<table>
-  <thead>
+<table class="table mt-7">
+  <% if @subscriptions_count < 1 %>
+    <h1>まだショップ開設してません</h1>
+  <% else %>
+    <thead>
       <div class="row">
+        <div class ="col-sm-1">
+          ID
+	</div>
+	<%
+=begin%>
+ <div class="col-sm-1">
+	  ordinal
+        </div> 
+<%
+=end%>
+        <div class="col-sm-2">
+          加盟店の状況
+        </div>
+        <div class="col-sm-2">
+          トライアル状態
+        </div>
         <div class="col-sm-2">
           お店の名前
         </div>
-
         <div class="col-sm-2">
           商品タイトル
         </div>
-
-        <div class="col-sm-2">
-          ジャンル
-        </div>
-
-        <div class="col-sm-2">
-          カテゴリ
-        </div>
-  </thead>
+    </thead>
+  <% end %>
 
   <tbody>
     <% @subscriptions.each do |subscription| %>
     <hr class="tool-bar">
-      <div class="row">
+    <div class="row">
+        <div class="col-sm-1">
+          <%= subscription.id %>
+        </div>
+        <div class="col-sm-2">
+          <span class="badge badge-info">
+            <% if subscription.admin_subscription_check == "承認" %>
+              <% if subscription.trial == true %>
+                <span class="badge badge-warning">トライアル参加済み</span>
+              <% end %>
+              <span class="badge badge-info">
+                <%= subscription.admin_last_check %>
+              </span>
+            <% elsif subscription.admin_subscription_check == "否認" %>
+              <span class="badge badge-info">
+                <%= subscription.admin_last_check %>
+              </span>
+            <% elsif subscription.situation == "加盟店舗の申請中" %>
+              <% if subscription.trial == true %>
+                <span class="badge badge-warning">トライアル参加申請中</span>
+              <% end %>
+              <span class="badge badge-info">
+                <%= subscription.situation %>
+              </span>
+            <% end %>
+          </span>
+        </div>
+        <div class="col-sm-2">
+        <% if subscription.admin_subscription_check == "承認" %>
+          <% if subscription.trial == false %>
+            <span class="badge badge-warning"><%= "不参加" %></span>
+          <% else %>
+             <span class="badge badge-warning"><%= "参加" %></span>
+          <% end %>
+        <% end %>
+        </div>
         <div class="col-sm-2">
           <%= subscription.name %>
         </div>
-
         <div class="col-sm-2">
           <%= subscription.title %>
         </div>
-        <div class="col-sm-2">
-          <%= subscription.category_genre %>
-        </div>
-
-        <div class="col-sm-2">
-          <%= subscription.category_name %>
-        </div>
-
+        <% if current_admin.present? || current_owner.present? %>
+          <div class="col-sm-1 tool--item">
+            <%= link_to "instagram投稿", new_instablog_path(subscription_id: subscription), class: "btn-gradient-3d-simple" %>
+          </div>
+        <% end %>
         <div class="col-sm-1 tool--item">
           <%= link_to "詳細", owner_subscription_path(subscription, owner_id: @owner.id), class: "btn-gradient-3d-simple" %>
         </div>
-        <div class="col-sm-1 tool--item">
-          <%= link_to "編集", edit_owner_subscription_path(subscription, owner_id: @owner.id), class: "btn-gradient-3d-simple" %>
-        </div>
-        <div class="col-sm-1 btn--del">
-          <%= link_to "削除", owner_subscription_path(subscription, owner_id: @owner.id), method: :delete, class: "btn btn-danger", data: { confirm: "お店を削除してよろしいですか？" } %>
-        </div>
+        <% if current_admin.present? || current_owner.present? %>
+          <div class="col-sm-1 tool--item">
+            <%= link_to "編集", edit_owner_subscription_path(subscription, owner_id: @owner.id), class: "btn-gradient-3d-simple" %>
+          </div>
+          <div class="col-sm-1 btn--del">
+            <%= link_to "削除", owner_subscription_path(subscription, owner_id: @owner.id), method: :delete, class: "btn btn-danger", data: { confirm: "お店を削除してよろしいですか？" } %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </tbody>
@@ -58,4 +102,6 @@
 
 <br>
 
-<%= link_to 'New Subscription', new_owner_subscription_path %>
+<% if current_owner.present? %>
+  <%= link_to '加盟店審査', new_owner_subscription_path, class: "btn btn-lg btn-brand mb-8" %>
+<% end %>

@@ -14,11 +14,12 @@ gem 'momentjs-rails'
 gem 'faker'#サンプル追加
 gem 'will_paginate' #ページネート
 gem 'bootstrap-will_paginate'#ページネート
+gem 'will_paginate-bootstrap4'#ページネート
 gem 'owlcarousel-rails'#カルーセル
 gem 'devise'
 gem 'paranoia', '~> 2.3', '>= 2.3.1'#論理削除
 gem 'font-awesome-rails'
-gem 'carrierwave', '~> 2.0'#複数画像投稿のgem
+gem 'carrierwave', '~> 2.2.1'#複数画像投稿のgem
 gem 'cloudinary'
 gem 'rmagick'#画像をリサイズしたりする
 gem 'rails-i18n'
@@ -30,10 +31,13 @@ gem 'omniauth-google-oauth2', '~> 0.8.0'
 gem 'omniauth-instagram'
 gem 'dotenv-rails'
 gem 'omniauth-line'
-gem 'omniauth-oauth2', '>= 1.6'
+gem 'omniauth-oauth2', '>= 1.3.1'
+gem 'activerecord-session_store'
 gem 'stripe'
 gem 'geocoder'#googlemap用
 gem 'gon'#googlemapお店一覧用
+gem 'rqrcode' #QRコード用
+gem "mimemagic", "~> 0.3.6"
 # Use sqlite3 as the database for Active Record
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
@@ -47,7 +51,7 @@ gem 'mini_racer'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
+# gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -57,6 +61,8 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+gem 'phony_rails' # 電話番号
+gem 'twilio-ruby'
 
 group :development, :test do
   gem 'sqlite3'
@@ -68,11 +74,15 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
+  gem 'webdrivers'
+  gem 'launchy', '~> 2.4.3'
   gem 'selenium-webdriver'
   gem "rspec_junit_formatter"
 end
 
 group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
@@ -80,6 +90,8 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'spring-commands-rspec'
+  gem "better_errors"
+  gem "binding_of_caller"
 end
 
 group :production do

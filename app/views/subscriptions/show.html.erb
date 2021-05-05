@@ -1,26 +1,81 @@
+<% provide(:title, "サブスクページ") %>
+<p id="notice"><%= notice %></p>
 <div class="container my-5">
   <section>
     <style>
-    	.rgba-black-gradient {
+      .rgba-black-gradient {
       	background: linear-gradient(to top, rgba(226, 230, 224) 55%,rgba(0,0,0,0) 90%);
-    	}
+      }
     </style>
     <div class="row">
       <div class="col-12">
         <div class="view zoom z-depth-1 rounded mb-4">
-          <%= image_tag @subscription.image_subscription_url ,width: '100%', height: "300" %>
+              <% if @subscription.image_subscription.present? %>
+                <%= image_tag @subscription.image_subscription_url, width: 'auto' %>
+              <% else %>
+                <p></p>
+              <% end %>
             <div class="mask rgba-black-gradient d-md-flex align-items-end">
               <div class="text-bottom white-text p-4">
-                <span class="badge badge-success"><%= @subscription.category_name %></span>
-                <span class="badge badge-success"><%= @subscription.category_genre %></span>
-                <h3 class="card-title font-weight-bold mt-2 mb-1"><%= @subscription.name %></h3>
-                <p class="font-weight-normal mb-2">住所：東京都 港区 1-1-1 TEL：0120-123-123<%= @subscription.owner.store_information %></p>
-              <% if current_user.present? && current_user.session_id == "true" %>
-                <%= link_to "チケットを使う",use_ticket_path(@owner, owner_id: @subscription.owner_id), class: "btn-gradient-3d-simple" %>
+                <% if @subscription.category.present? %>
+                  <span class="badge badge-success">
+                  <%= @subscription.category.name %>
+                  </span>
+                <% end %>
+                <br>
+                <span class="badge badge-success">加盟店</span>
+                <% if @subscription.trial == true %>
+                  <span class="badge badge-warning">トライアルでも利用可能</span>
+                <% elsif @subscription.trial == false %>
+                  <span class="badge badge-warning">トライアルチケットでは利用できません。加盟店プランをお買い求めください。</span>
+                <% end %>
+                <h3 class="card-title font-weight-bold mt-2 mb-1">
+                  <%= @subscription.name %>
+                </h3>
+                <span class="badge badge-info">
+                  <% if @subscription.food_loss == true %>
+                    <%= "フードロス実施店舗" %>
+                  <% end %>
+                </span>
+                <p class="font-weight-normal mb-2">
+                  <% if @subscription.address.present? %>
+                    住所：<%= @subscription.address %>
+                  <% else %>
+                    <p></p>
+                  <% end %> |
+                  <% if @subscription.phone_number.present? %>
+                    テイクアウトTEL：<%= @subscription.phone_number %>
+                  <% else %>
+                    <p></p>
+                  <% end %>
+                </p><br>
+              <% if @payment.present? %>
+                <% if @subscription.trial == true && current_user.price == 1000 %>
+                  <%= link_to "チケットを発券する", use_ticket_path(@subscription), class: "btn-gradient-3d-simple1" %>
+                  <%= render "takeout" if @subscription.takeout? %>
+                <% elsif @subscription.trial == false && current_user.price == 1000 %>
+                  <%= link_to "トライアルプランを解除する", user_plan_path, method: :delete, data: { confirm: "【確認】トライアルを解除してよろしいでしょうか？" }, class: "btn-gradient-3d-simple1" %>
+                <% elsif @subscription.price.to_i <= current_user.price %>
+                  <%= link_to "チケットを発券する", use_ticket_path(@subscription), class: "btn-gradient-3d-simple1 mb-2" %>
+                  <%= render "takeout" if @subscription.takeout? %>
+                  <%= link_to "加盟店プランを解除する", user_plan_path, method: :delete, data: { confirm: "【確認】サブスクを解除してよろしいでしょうか？" }, class: "btn-gradient-3d-simple1 mb-2" %>
+                <% else %>
+                  <%= link_to "加盟店プランを解除する", user_plan_path, method: :delete, data: { confirm: "【確認】サブスクを解除してよろしいでしょうか？" }, class: "btn-gradient-3d-simple1" %>
+                <% end %>
               <% elsif current_user.present? %>
-                <%= link_to "サブスクを始める",user_plans_path(current_user.id), class: "btn-gradient-3d-simple" %>
+                <%= link_to "サブスク決済を始める", subscription_plan_path(@subscription, @subscription.price), class: "btn-gradient-3d-simple1" %>
+              <% elsif current_owner.present? %>
+                <%= link_to "サブスク一覧へ", owner_subscriptions_path(current_owner), class: "btn-gradient-3d-simple1" %>
+                <%= link_to "サブスクカスタマイズ", edit_owner_subscription_path(@subscription, @owner, owner_id: @subscription.owner_id), class: "btn-gradient-3d-simple1" %>
+              <% elsif current_admin.present? %>
+                <%= link_to "サブスクカスタマイズ", edit_owner_subscription_path(@subscription, @owner, owner_id: @subscription.owner_id), class: "btn-gradient-3d-simple1" %>
+                <% if @subscription.recommend == true %>
+                  <%= link_to "おすすめ店舗から削除", edit_recommend_owner_subscription_path(current_admin), class: "btn-gradient-3d-simple1" %>
+                <% elsif @subscription.recommend == false %>
+                  <%= link_to "おすすめ店舗に追加", edit_recommend_owner_subscription_path(current_admin), class: "btn-gradient-3d-simple1" %>
+                <% end %>
               <% else %>
-                <%= link_to "ログインしてサブスクを開始",new_user_session_path, class: "btn-gradient-3d-simple" %>
+                <%= link_to "ログインしてサブスクを開始", new_user_session_path, class: "btn-gradient-3d-simple1" %>
               <% end %>
               </div>
             </div>
@@ -31,56 +86,154 @@
   </section>
 </div>
 
-
 <div class="container my-5 py-5 z-depth-1">
   <section class="text-center">
-    <h3 class="font-weight-bold mb-5"><%= @subscription.name %> 店舗紹介（仮）</h3>
+    <h3 class="font-weight-bold mb-5"><%= @subscription.name %> 店舗紹介</h3>
     <div class="row">
       <div class="col-lg-6">
-        <div id="carousel-thumb1" class="carousel slide carousel-fade carousel-thumbnails mb-5 pb-4" data-ride="carousel">
-          <div class="carousel-inner text-center text-md-left" role="listbox">
+
+        <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+          <div class="carousel-inner">
             <div class="carousel-item active">
-              <%= image_tag @subscription.image_subscription2_url ,size: '700x350', alt: "First slide", class: "img-fluid" %>
+              <%= image_tag @subscription.sub_image.to_s, class: "img-fluid" %>
             </div>
-            <div class="carousel-item">
-              <%= image_tag @subscription.image_subscription3_url ,size: '700x350', alt: "Second slide", class: "img-fluid" %>
-            </div>
-            <div class="carousel-item">
-              <%= image_tag @subscription.image_subscription4_url ,size: '700x350', alt: "Third slide", class: "img-fluid" %>
-            </div>
+
+            <% if @subscription.sub_image2.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image2.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image3.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image3.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image4.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image4.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image5.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image5.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image6.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image6.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image7.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image7.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image8.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image8.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
+            <% if @subscription.sub_image9.to_s.present? %>
+              <div class="carousel-item">
+                <%= image_tag @subscription.sub_image9.to_s, class: "img-fluid" %>
+              </div>
+            <% end %>
+
           </div>
-          <a class="carousel-control-prev" href="#carousel-thumb1" role="button" data-slide="prev">
+          <a class="carousel-control-prev prev-slide" href="#carousel-thumb1" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
+            <span class="sr-only"></span>
           </a>
-          <a class="carousel-control-next" href="#carousel-thumb1" role="button" data-slide="next">
+          <a class="carousel-control-next next-slide" href="#carousel-thumb1" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
+            <span class="sr-only"></span>
           </a>
         </div>
+
         <div class="row mb-4">
           <div class="col-md-12">
             <div id="mdb-lightbox-ui"></div>
             <div class="mdb-lightbox no-margin">
-             <div class="row">
-              <figure class="col-md-4">
-                  <%= image_tag "#{@subscription.image_subscription2_url}", class: "img-fluid" %>
-              </figure>
-              <figure class="col-md-4">
-                  <%= image_tag @subscription.image_subscription3_url, class: "img-fluid" %>
-              </figure>
-              <figure class="col-md-4">
-                  <%= image_tag @subscription.image_subscription4_url, class: "img-fluid" %>
-              </figure>
+              <div class="row">
+                <figure class="col-md-4">
+                  <%= image_tag @subscription.sub_image.to_s, data: {target: "#carousel", slide_to: "0"}, class: "img-fluid shadow-sm active" %>
+                </figure>
+
+                <% if @subscription.sub_image2.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image2.to_s, data: {target: "#carousel", slide_to: "1"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image3.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image3.to_s, data: {target: "#carousel", slide_to: "2"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image4.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image4.to_s, data: {target: "#carousel", slide_to: "3"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image5.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image5.to_s, data: {target: "#carousel", slide_to: "4"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image6.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image6.to_s, data: {target: "#carousel", slide_to: "5"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image7.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image7.to_s, data: {target: "#carousel", slide_to: "6"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image8.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image8.to_s, data: {target: "#carousel", slide_to: "7"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+                <% if @subscription.sub_image9.to_s.present? %>
+                  <figure class="col-md-4">
+                    <%= image_tag @subscription.sub_image9.to_s, data: {target: "#carousel", slide_to: "8"}, class: "img-fluid shadow-sm" %>
+                  </figure>
+                <% end %>
+
+              </div>
             </div>
           </div>
         </div>
-       </div>
       </div>
+
+
+
+      <script>
+        $(".prev-slide").on('click',function(){
+          $("#carousel").carousel('prev');
+        });
+        $(".next-slide").on('click',function(){
+          $("#carousel").carousel('next');
+        });
+      </script>
 
       <div class="col-lg-5 text-center text-md-left">
 
-        <h2 class="h2-responsive text-center text-md-left product-name font-weight-bold dark-grey-text mb-1 ml-xl-0 ml-4"><%= @subscription.name %></h2>
+        <h1 class="display-5 h2-responsive text-center text-md-left product-name font-weight-bold dark-grey-text mb-1 ml-xl-0 ml-4"><%= @subscription.name %></h1>
         <span class="badge badge-danger product mb-4 ml-xl-0 ml-4">NEW</span>
 
         <h3 class="h3-responsive text-center text-md-left mb-5 ml-xl-0 ml-4">
@@ -91,28 +244,23 @@
 
         <div class="font-weight-normal">
 
-          <p class="ml-xl-0 ml-4">
-            <strong>お店紹介: </strong><%= @subscription.shop_introduction %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>お店のブログ: </strong><%= @subscription.blog %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>商品紹介: </strong><%= @subscription.detail %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>店舗情報: </strong><%= @subscription.subscription_detail %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>お店の住所: </strong><%= @subscription.owner.store_information %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>TEL: </strong><%= @subscription.owner.phone_number %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>お店のブログ: </strong><%= @subscription.blog %></p>
-          <p class="ml-xl-0 ml-4">
-            <strong>レビュー: </strong>1番下にお店に対するレビューを記載。</p>
-          <%= form_with(model: @map, url: map_path, local: true) do |f| %>
-            <%= f.text_field :address, placeholder: "エリア入力", class: "form-control" %>
-            <%= f.submit '検索' %>
-          <% end %>
-          <div class="map-2" id='map'>
-          </div>
+          <h2 class="ml-xl-0 ml-4">
+            <strong>商品紹介: </strong><%= @subscription.detail %></h2>
+          <h2 class="ml-xl-0 ml-4">
+            <strong>店舗情報: </strong><%= @subscription.subscription_detail %></h2>
+          <h2 class="ml-xl-0 ml-4">
+            <strong>デリバリー: </strong>
+            <% if @subscription.delivery == true %>
+              <%= "可" %>
+            <% elsif @subscription.delivery == false %>
+              <%= "不可" %>
+            <% end %>
+          </h2>
+          <h2 class="ml-xl-0 ml-4">
+            <strong>加入プラン: </strong><%= @subscription.price %></h2>
+
+          <%# google map %>
+          <%= render "maps/subsc" %>
 
           <div class="mt-5">
 
@@ -120,31 +268,103 @@
 
               <div class="row mt-3 mb-4">
               <div class="col-md-12 text-center text-md-left text-md-right">
-                <button class="btn btn-outline-success btn-rounded">
-                  ブログ</button>
-              </div>
-            </div>&nbsp;
-
-            <div class="row mt-3 mb-4">
-              <div class="col-md-12 text-center text-md-left text-md-right">
-                <button class="btn btn-outline-danger btn-rounded">
-                  MAP</button>
-              </div>
-            </div>&nbsp;
-
-            <div class="row mt-3 mb-4">
-              <div class="col-md-12 text-center text-md-left text-md-right">
-                <button class="btn btn-outline-warning btn-rounded">
-                  レビュー</button>
-              </div>
-            </div>&nbsp;
-
-            <div class="row mt-3 mb-4">
-              <div class="col-md-12 text-center text-md-left text-md-right">
-                <button class="btn btn-outline-primary btn-rounded">
-                  お問い合わせ</button>
-              </div>
-            </div>
+              <% if current_owner.present? %>
+                <%= link_to "ブログ",instablog_path(@subscription.id), class: "btn btn-outline-success btn-rounded" %><br>
+                <%= link_to "メール",users_user_subscription_email_path(@subscription.id), class: "btn btn-outline-success btn-rounded" %><br>
+                  <% if @subscription.phone_number.present? %>
+                    　　　お店専用テイクアウトTEL：<%= @subscription.phone_number %>
+                  <% else %>
+                    <p>お店専用テイクアウトTEL：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.email.present? %>
+                    　　　お店専用メール：<%= @subscription.email %>
+                  <% else %>
+                    <p>お店専用メール：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                <% if @subscription.qr_image.present? %>
+                  <%= image_tag @subscription.qr_image ,size: '300', alt: "QR_Code", class: "img-fluid" %>
+                  <p>LINE@招待コード</p>
+                <% else %>
+                  <p>お問い合わせ※QRコードが登録されていません</p>
+                <% end %><br>
+              <% elsif current_user.present? %>
+                <%= link_to "ブログ", instablog_path(@subscription.id), class: "btn btn-outline-success btn-rounded" %>
+                <%= link_to "レビューを投稿する", subscription_reviews_path(@subscription, @owner, owner_id: @subscription.owner_id), class: "btn btn-outline-warning btn-rounded" %>
+                  <% if @subscription.email.present? %>
+                    <%= link_to "メール", users_user_subscription_email_path(current_user, owner_id: @subscription.owner_id, id: @subscription.id), class: "btn btn-outline-info btn-rounded" %>
+                  <% end %><br>
+                  <% if @subscription.address.present? %>
+                    　　　住所：<%= @subscription.address %>
+                  <% else %>
+                    <p>住所：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.phone_number.present? %>
+                    　　　お店専用テイクアウトTEL：<%= @subscription.phone_number %>
+                  <% else %>
+                    <p>お店専用テイクアウトTEL：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.email.present? %>
+                    　　　お店専用メール：<%= @subscription.email %>
+                  <% else %>
+                    <p>お店専用メール：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.qr_image.present? %>
+                    <%= image_tag @subscription.qr_image ,size: '300', alt: "QR_Code", class: "img-fluid" %>
+                    <p>LINE@招待コード</p>
+                  <% else %>
+                    <p>お問い合わせ※QRコードが登録されていません</p>
+                  <% end %><br>
+              <% elsif current_admin.present? %>
+                <%= link_to "ブログ", instablog_path(@subscription.id), class: "btn btn-outline-success btn-rounded" %>
+                <%= link_to "レビューを投稿する", subscription_reviews_path(@subscription, @owner, owner_id: @subscription.owner_id), class: "btn btn-outline-warning btn-rounded" %>
+                  <% if @subscription.email.present? %>
+                    <%= link_to "メール", users_user_subscription_email_path(owner_id: @subscription.owner_id, id: @subscription.id), class: "btn btn-outline-info btn-rounded" %>
+                  <% end %><br>
+                  <% if @subscription.address.present? %>
+                    　　　住所：<%= @subscription.address %>
+                  <% else %>
+                    <p>住所：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.phone_number.present? %>
+                    　　　お店専用テイクアウトTEL：<%= @subscription.phone_number %>
+                  <% else %>
+                    <p>お店専用テイクアウトTEL：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.email.present? %>
+                    　　　お店専用メール：<%= @subscription.email %>
+                  <% else %>
+                    <p>お店専用メール：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.qr_image.present? %>
+                    <%= image_tag @subscription.qr_image ,size: '300', alt: "QR_Code", class: "img-fluid" %>
+                    <p>LINE@招待コード</p>
+                  <% else %>
+                    <p>お問い合わせ※QRコードが登録されていません</p>
+                  <% end %><br>
+              <% else %>
+                <%= link_to "ブログ",instablog_path(@subscription.id), class: "btn btn-outline-success btn-rounded" %><br>
+                  <% if @subscription.address.present? %>
+                    　　　住所：<%= @subscription.address %>
+                  <% else %>
+                    <p>住所：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.phone_number.present? %>
+                    　　　お店専用テイクアウトTEL：<%= @subscription.phone_number %>
+                  <% else %>
+                    <p>お店専用テイクアウトTEL：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.email.present? %>
+                    　　　お店専用メール：<%= @subscription.email %>
+                  <% else %>
+                    <p>お店専用メール：登録されていません。LINE@からお問い合わせください。</p>
+                  <% end %><br>
+                  <% if @subscription.qr_image.present? %>
+                    <%= image_tag @subscription.qr_image ,size: '300', alt: "QR_Code", class: "img-fluid" %>
+                    <p>LINE@招待コード</p>
+                  <% else %>
+                    <p>お問い合わせ※QRコードが登録されていません</p>
+                  <% end %><br>
+              <% end %>
             </div>
           </div>
         </div>
@@ -153,49 +373,56 @@
   </section>
 </div>
 
-<style>
-#map{
-  height: 500px;
-  width: 500px;
-}
-</style>
 
-<script>
-let map
-let geocode
+<div class="container my-5 py-5 z-depth-1">
+  <section class="text-center">
+    <h3 class="font-weight-bold mb-5"><%= @subscription.name %> 店舗レビュー</h3>
 
-const display = document.getElementById('display')
+            <div class="card-content">
+              <div class="content">
+                <div class="content average-score">
+                  <div class="star-rating mb-2">
+                    <div class="star-rating-front" style="width: <%= @subscription.review_score_percentage %>%">★★★★★</div>
+                    <div class="star-rating-back">★★★★★</div>
+                  </div>
+                  <div class="average-score-display ml-3 pt-2">
+                    平均 <%= @subscription.avg_score %>点（<%= @subscription.reviews.count %>件のレビュー）
+                  </div>
+                </div>
+              </div>
+            </div>
 
-function initMap(){
-  geocoder = new google.maps.Geocoder()
+     <table class="table" style="table-layout:fixed;width:100%;">
+       <thead class="thead-light">
+         <tr>
+           <% if current_admin.present? %>
+            <th>投稿者</th>
+           <% end %>
+           <th>コメント</th>
+           <th>評価</th>
+           <th>投稿日</th>
+           <% if current_user.present? %>
+            <th>投稿編集</th>
+           <% end %>
+         </tr>
+       </thead>
 
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: 
-    {lat: <%= @map.latitude.present? ? @map.latitude : 34.9787 %>,
-     lng:<%= @map.longitude.present? ? @map.longitude : 138.3830 %>},
-    zoom: 18,
-  });
-}
-
-function codeAddress(){
-  // 入力を取得
-  let inputAddress = document.getElementById('address').value;
-
-  // geocodingしたあとmapを移動
-  geocoder.geocode( { 'address': inputAddress}, function(results, status) {
-    if (status == 'OK') {
-  // map.setCenterで地図が移動
-      map.setCenter(results[0].geometry.location);
-
-  // google.maps.MarkerでGoogleMap上の指定位置にマーカが立つ
-      var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAP_KEY'] %>&callback=initMap" async defer></script>
+       <tbody>
+        <% @reviews.each do |review| %>
+         <tr>
+           <% if current_admin.present? %>
+            <td><%= review.user.name %></td>
+           <% end %>
+           <td style="word-wrap:break-word;"><%= review.content %></td>
+           <td><%= review.score %></td>
+           <td><%= review.created_at.strftime('%Y/%m/%d') %></td>
+           <% if current_user.present? && current_user.id == review.user_id %>
+            <th><%= link_to "編集", edit_subscription_reviews_path(@subscription, review, user_id: current_user.id), class: "btn btn-outline-warning btn-rounded" %></th>
+           <% end %>
+         </tr>
+        <% end %>
+       </tbody>
+     </table>
+  </section>
+<%= will_paginate(@reviews, class: "pagination justify-content-center mt-6 mb-7", renderer: WillPaginate::ActionView::Bootstrap4LinkRenderer) %>
+</div>

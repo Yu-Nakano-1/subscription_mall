@@ -1,6 +1,6 @@
 /* universal */
 
-/* http://meyerweb.com/eric/tools/css/reset/ 
+/* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -14,8 +14,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -27,7 +27,7 @@ time, mark, audio, video {
 	font-family: 'Hiragino Sans','ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',sans-serif;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
@@ -49,7 +49,7 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-input[type="submit"],
+
 input[type="button"] {
 	-webkit-box-sizing: content-box;
 	-webkit-appearance: button;
@@ -57,7 +57,8 @@ input[type="button"] {
 body {
   margin: 0!important;
 }
-    /* リセットCSSここまで */
+
+  /* リセットCSSここまで */
 
 section {
   overflow: auto;
@@ -74,11 +75,32 @@ textarea {
 .center h1 {
   margin-bottom: 10px;
 }
+.doui {
+  margin-bottom: 20px;
+}
+
+.red {
+  color: red;
+}
 
 //詳細、編集リンクボタン
 .btn-gradient-3d-simple {
   display: inline-block;
-  padding: 0.5em 1em;
+  padding: 1em 1em;
+  text-decoration: none;
+  border-radius: 4px;
+  color: #ffffff;
+  background-image: linear-gradient(#6795fd 0%, #67ceff 100%);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
+  border-bottom: solid 3px #5e7fca;
+}
+
+//詳細、編集リンクボタン
+.btn-gradient-3d-simple1 {
+  width: 180px;
+  height: 50px;
+  display: inline-block;
+  padding: 1em 1em;
   text-decoration: none;
   border-radius: 4px;
   color: #ffffff;
@@ -105,6 +127,11 @@ textarea {
 }
 .subject-right {
   text-align: right;
+}
+
+.account-btn {
+  margin-top: 10px;
+  margin-left: 10px;
 }
 
 /* typography */
@@ -159,6 +186,16 @@ p {
 .subscription-bg {
   background: linear-gradient(to bottom,#ecf58f,#fdfdfd);
 }
+//カテゴリ検索ボックス
+.search {
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+//ログインページ
+.sudeni-login {
+  margin-bottom: 30px;
+}
+
 
 @import url(//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
@@ -200,6 +237,9 @@ h1 {font-size:1.5em;margin-bottom:55px;}
   -moz-transition:all .5s;
   transition:all .5s;
   overflow:hidden
+}
+.discussion {
+  margin:10px;
 }
 
 .btn:hover {
@@ -257,54 +297,21 @@ h1 {font-size:1.5em;margin-bottom:55px;}
   border-radius:0 5px 5px 0
 }
 
-/*Facebook*/
-.btn-facebook:hover > i,.btn-facebook:focus > i {
-  color:#3b5998
-}
-
-.btn-facebook > span {
-  background:#3b5998
-}
-
-/*Twitter*/
-.btn-twitter:hover > i,.btn-twitter:focus > i {
-  color:#55acee
-}
-
-.btn-twitter > span {
-  background:#55acee
-}
-
-/*Google*/
-.btn-googleplus:hover > i,.btn-googleplus:focus > i {
-  color:#dd4b39
-}
-
-.btn-googleplus > span {
-  background:#dd4b39
-}
+/*LINE*/
 .btn-googleplus2 > span {
   background:#09ca19
 }
 
-
-/*Pinterest*/
+/*LINE*/
 .btn-pinterest:hover > i,.btn-pinterest:focus > i {
-  color:#cb2028
+  color:#12c96d
 }
 
 .btn-pinterest > span {
-  background:#cb2028
+  background:#12c96d
 }
 
-/*LinkedIn*/
-.btn-linkedin:hover > i,.btn-linkedin:focus > i {
-  color:#007bb6
-}
 
-.btn-linkedin > span {
-  background:#007bb6
-}
 a {
   color: #fff;
   text-decoration: none;
@@ -366,7 +373,7 @@ $email_color: #9F0303;
     transform: scale(1.2);
     box-shadow: 0 0.3125em 0.9375em 0 rgba(0, 0, 0, 0.4);
   }
-  
+
   &:active {
     transform: scale(0.9);
     box-shadow: 0 0.125em 0.1875em 0 rgba(0, 0, 0, 0.4);
@@ -394,4 +401,343 @@ $email_color: #9F0303;
     color: $email_color;
     background: #fff;
   }
+}
+
+//インスタ画像
+.insta-list {
+  width: 930px;
+  padding: 0;
+  margin: 0 auto;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; */
+}
+
+.insta-list li {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #ccc;
+}
+
+.insta-list li + li{
+  margin: 0 0 10px 10px;
+}
+.insta-list li:nth-child(4){
+  margin: 0;
+}
+.insta-list li img{
+  width: 100%;
+  height: auto;
+}
+
+.insta-image {
+  overflow:		hidden;
+  position:		relative;
+}
+
+.insta-image .caption {
+  font-size:		100%;
+  white-space: pre;
+  text-align: 	center;
+  margin: 30px auto;
+	color:			rgb(255, 255, 255);
+}
+
+.insta-image .mask {
+	width:			100%;
+	height:			100%;
+	position:		absolute;
+	top:			0;
+	left:			0;
+	opacity:		0;	/* マスクを表示しない */
+	background-color:	rgba(0,0,0,0.4);
+	-webkit-transition:	all 1s ease;
+	transition:		all 1s ease;
+}
+.insta-image:hover .mask {
+	opacity:		1;	/* マスクを表示する */
+	padding-left:		10px;	/* ホバーで下にずらす */
+}
+
+.insta-title {
+  font-family: cursive;
+  text-align: 	center;
+  font-size:		250%;
+  background: linear-gradient(to bottom,#b331f0,#f8e644);
+  margin: 20px auto;
+  width:			40%;
+  color: #111;
+  border-radius: 0.3125em;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+
+//レビューの星
+.rating-box .ratings {
+  font-size: 30px;
+  color: #fc0;
+  cursor: pointer;
+}
+
+.rating-value-display {
+  font-size: 20px;
+}
+
+.star-rating {
+  position: relative;
+  width: 5em;
+  height: 1em;
+  font-size: 25px;
+}
+.star-rating-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: #ffcc33;
+}
+.star-rating-back {
+  color: #ccc;
+}
+
+.average-score {
+  display: flex;
+}
+.average-score-display {
+  font-size: 16px;
+}
+
+.star-rating2 {
+  position: relative;
+  top: 10px;
+  left: 150px;
+  width: 5em;
+  height: 1em;
+  font-size: 25px;
+}
+.star-rating2-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: #ffcc33;
+}
+.star-rating2-back {
+  color: #ccc;
+}
+
+//top-page-review
+.slick-next {
+  right: 10px !important;
+  z-index: 100;
+}
+
+.slick-prev {
+  left: 10px !important;
+  z-index: 100;
+}
+
+.box14{
+  padding: 0.2em 0.5em;
+  margin: 2em 0;
+  background: #ffeaea;
+  box-shadow: 0px 0px 0px 10px #ffeaea;
+  border: dashed 2px white;
+  position: absolute;
+  width:			500px;
+  height:			250px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.box14 p {
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2em;
+  word-break: keep-all;
+}
+
+.star-rating-top {
+  position: relative;
+  top: 3px;
+  left: 0px;
+  width: 5em;
+  height: 1em;
+  font-size: 25px;
+}
+.star-rating-top-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: #ffcc33;
+}
+.star-rating-top-back {
+  color: #ccc;
+}
+
+// ブランドカラーの文字色
+.brand-color {
+color: #faab05;
+}
+
+// オリジナルの余白
+.mt-6 {
+margin-top: 5rem;
+}
+
+.mt-7 {
+  margin-top: 8rem;
+}
+
+.mt-8 {
+  margin-top: 10rem;
+}
+
+.mb-6 {
+  margin-bottom: 5rem;
+}
+
+.mb-7 {
+  margin-bottom: 8rem;
+}
+
+.mb-8 {
+  margin-bottom: 10rem;
+}
+
+// サブスクnewsページの ボタン
+.btn-gradient-radius {
+  display: inline-block;
+  padding: 7px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  color: #FFF;
+  background-image: linear-gradient(45deg, #FFC107 0%, #ff8b5f 100%);
+  transition: .4s;
+}
+
+.btn-gradient-radius:hover {
+  background-image: linear-gradient(45deg, #FFC107 0%, #f76a35 100%);
+}
+
+.btn-danger-radius {
+  display: inline-block;
+  padding: 7px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  color: #FFF;
+  background-image: linear-gradient(45deg, #DC3545 0%, #DC3545 100%);
+  transition: .4s;
+}
+
+.btn-danger-radius:hover {
+  background-image: linear-gradient(45deg, #DC3545 0%, #DC3545 100%);
+}
+
+.btn-brand {
+  color: #fff;
+  background-color: #faab05;
+  border-color: #faab05;
+}
+
+.btn-brand2 {
+  color: #fff;
+  background-color: #e9490a;
+  border-color: #e9490a;
+}
+
+.qrcode_button{
+  display: inline-block;
+  padding: 0.3em 1em;
+  text-decoration: none;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: .4s;
+  cursor: pointer;
+}
+
+// input[type="file"] {
+//   display: none;
+// }
+
+// 消えたフォームの枠を表示する
+.form_border{
+  border: solid 1px #c0c0c0 !important;
+}
+
+// フォームのプレイスホルダー色を薄いグレーにする
+.form-control::placeholder{
+  color: #c0c0c0 !important;
+}
+
+// フォームのプレイスホルダー文字色を薄いグレーにする
+.form_border::placeholder{
+  color: #c0c0c0 !important;
+}
+
+// instablogの表示
+.instablog {
+  width: 30rem;
+  margin: 0 auto;
+}
+
+.autoplay img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.recommended-box {
+  position: relative;
+}
+
+.recommended-inner-box {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: rgba(255,255,255,0.5);
+}
+
+.not-slider img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.recommended-box-2 {
+  position: relative;
+}
+
+.recommended-inner-box-2 {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background-color: rgba(255,255,255,0.5);
+}
+
+.not-slider-2 img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.recommended-outer-box {
+  width: 300px;
+  height: 300px;
+}
+
+// オリジナルの見出し用タイポグラフィ
+.display-5 {
+  font-size: 1.8rem;
+  font-weight: 300;
+  line-height: 1.2;
 }

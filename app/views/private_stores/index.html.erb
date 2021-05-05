@@ -1,0 +1,78 @@
+<% provide(:title, "個人店舗サブスクページ一覧") %>
+<p id="notice"><%= notice %></p>
+
+<h1 class="brand-color display-4 mt-6 mb-6">個人店舗サブスクページ一覧</h1>
+
+<table class="table mt-7">
+  <% if @private_stores_count < 1 %>
+    <h1>まだショップ開設してません</h1>
+  <% else %>
+    <thead>
+      <div class="row">
+        <div class="col-sm-2">
+          個人店の状況
+        </div>
+        <div class="col-sm-2">
+          トライアル状態
+        </div>
+        <div class="col-sm-2">
+          お店の名前
+        </div>
+        <div class="col-sm-2">
+          商品タイトル
+        </div>
+      </div>
+    </thead>
+  <% end %>
+
+  <tbody>
+    <% @private_stores.each do |private_store| %>
+    <hr class="tool-bar">
+      <div class="row">
+        <div class="col-sm-2">
+          <span class="badge badge-info">
+            <%= private_store.situation %>
+          </span>
+        </div>
+        <div class="col-sm-2">
+        <% if private_store.admin_private_check == "承認" %>
+          <% if private_store.trial == false %>
+            <%= "不参加" %>
+          <% else %>
+            <%= "参加" %>
+          <% end %>
+        <% end %>
+        </div>
+        <div class="col-sm-2">
+          <%= private_store.name %>
+        </div>
+        <div class="col-sm-2">
+          <%= private_store.title %>
+        </div>
+        <% if current_admin.present? || current_owner.present? %>
+          <div class="col-sm-1 tool--item">
+            <%= link_to "instagram投稿", new_private_store_instablog_path(private_store_id: private_store), class: "btn-gradient-3d-simple" %>
+          </div>
+        <% end %>
+        <div class="col-sm-1 tool--item">
+          <%= link_to "詳細", owner_private_store_path(private_store, owner_id: @owner.id), class: "btn-gradient-3d-simple" %>
+        </div>
+        <% if current_admin.present? || current_owner.present? %>
+          <div class="col-sm-1 tool--item">
+            <%= link_to "編集", edit_owner_private_store_path(private_store, owner_id: @owner.id), class: "btn-gradient-3d-simple" %>
+          </div>
+          <div class="col-sm-1 btn--del">
+            <%= link_to "削除", owner_private_store_path(private_store, owner_id: @owner.id), method: :delete, class: "btn btn-danger", data: { confirm: "お店を削除してよろしいですか？" } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<% if current_owner.present? %>
+  <%= link_to '個人店審査', new_owner_private_store_path, class: "btn btn-lg btn-brand mb-8" %>
+<% end %>
+
