@@ -1,4 +1,6 @@
 class PrivateStoresController < ApplicationController
+  #skip_before_action :verify_authenticity_token
+  #protect_from_forgery with: :null_session
   before_action :set_private_store, only: [:update, :show, :edit, :update, :destroy, :edit_recommend, :update_recommend, :takeout]
   before_action :set_owner, only: [:index, :new, :create, :show, :edit, :update, :destroy, :owner_private_stores, :edit_recommend, :update_recommend, :private_store_confirm, :private_store_judging, :takeout]
   # before_action :set_user, only: [:favorite, :edit_favorite, :update_favorite]
@@ -17,9 +19,9 @@ class PrivateStoresController < ApplicationController
   end
 
   def private_all_shop
-    @private_stores = PrivateStore.where(admin_last_check: "個人承認審査済み")
+    @private_stores = PrivateStore.where(admin_last_check: "個人承認審査済み").includes(:owner)
     @private_stores_count = PrivateStore.where(admin_last_check: "個人承認審査済み").count
-    @private_stores = PrivateStore.all
+    # @private_stores = PrivateStore.all
     if current_user.present?
       current_user.update!(select_trial: false)  if current_user.plan_canceled || (!current_user.trial_stripe_success && current_user.select_trial)
     end
@@ -98,7 +100,11 @@ class PrivateStoresController < ApplicationController
     @private_store = PrivateStore.new(private_store_params)
     respond_to do |format|
       if @private_store.save
-        @private_store.update(ordinal: PrivateStore.count)
+        if current_owner.admin_check_private == "個人店承認済み"
+          @private_store.update!(situation: "個人店承認済み", admin_last_check: "個人承認審査済み", ordinal: PrivateStore.count)
+        elsif current_owner.admin_check_private == "個人店否認済み"
+          @private_store.update!(situation: "個人店否認済み", admin_last_check: "個人店否認済み", ordinal: PrivateStore.count)
+        end
         PrivateStoreMailer.with(private_store: @private_store, new: "true").notification_email.deliver_now
         format.html { render :private_store_judging, notice: '個人店サブスクショップの審査申請しました' }
         format.json { render :show, status: :created, location: @private_store }
@@ -167,7 +173,7 @@ class PrivateStoresController < ApplicationController
           category_id: @private_store.category_id,
           issue_ticket_day: Date.today,
           user_id: current_user.id,
-        ) 
+        )
       else
         ticket = Ticket.create!(
           owner_name: @owner.name,
@@ -179,28 +185,13 @@ class PrivateStoresController < ApplicationController
           category_id: @private_store.category_id,
           issue_ticket_day: Date.today,
           user_id: current_user.id,
-        ) 
+        )
       end
       redirect_to user_ticket_url(ticket, user_id: current_user.id)
       PrivateStoreMailer.with(id: current_user.id, private_store_id: @private_store.id).takeout_email.deliver_now
     else
       redirect_to like_lunch_category_url(@private_store.category_id)
     end
-  end
-
-  def strip
-      # サブスク登録
-      Stripe::Checkout::Session.create(
-        success_url: private_store_success_url,
-        cancel_url: private_store_cancel_url,
-        payment_method_types: ['card'],
-        customer_email: current_user.email,
-        line_items: [{
-          price: params[:session],
-          quantity: 1},
-        ],
-        mode: 'subscription',
-      )
   end
 
     private

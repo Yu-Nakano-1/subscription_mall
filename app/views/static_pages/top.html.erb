@@ -62,7 +62,12 @@
 
     <hr class="border-solid-down" />
     <div class="search">
-      <%= render partial: "categories/select", locals: {categories: @category_all} %>
+      <div class="input-group">
+        <%= form_with(url: search_categories_path, method: :post, local: true) do |f| %>
+          <%= f.select :category_id, categories_list(@category_all), {include_blank: "キーワードからお店を検索してみよう", class: "form-control"} %>
+          <%= f.submit "検索" %>
+        <% end %>
+      </div>
     </div>
     <div class="category">
       <%= link_to categories_path, class: "btn-gradient-radius-orange" do%>
@@ -423,7 +428,12 @@
 
     <hr class="border-solid-down" />
     <div class="search">
-      <%= render partial: "categories/select", locals: {categories: @category_all} %>
+      <div class="input-group">
+        <%= form_with(url: search_categories_path, method: :post, local: true) do |f| %>
+          <%= f.select :category_id, categories_list(@category_all), {include_blank: "キーワードからお店を検索してみよう", class: "form-control"} %>
+          <%= f.submit "検索" %>
+        <% end %>
+      </div>
     </div>
     <div class="category">
       <%= link_to categories_path, class: "btn-gradient-radius-orange" do%>
@@ -452,11 +462,11 @@
         <div class="trial_plan">
         <% if current_user.price.blank? %>
           <div>
-            <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_plan_path, class: "btn btn-link box2" %></span>
+            <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_shop_path, class: "btn btn-link box2" %></span>
           <div>
         <% else %>
           <div>
-            <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_plan_path, class: "btn btn-link box2" %></span>
+            <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_shop_path, class: "btn btn-link box2" %></span>
           <div>
         <% end %>
         </div>
@@ -495,7 +505,7 @@
         <%= link_to image_tag("https://cdn.pixabay.com/photo/2019/11/15/10/05/stalls-4628091__480.jpg", :size => '280x200'), subscription_plan_path(-1, 30000) %>
         <div class="plan-shop-btn">
           <%= link_to "ちょっぴりグルメな方はこちら", subscription_plan_path(-1, 30000) %>
-          <%= link_to "800000円", subscription_plan_path(-1, 30000) %>
+          <%= link_to "30000円", subscription_plan_path(-1, 30000) %>
         </div>
       </div>
       <div class="plan-item">
@@ -887,7 +897,12 @@
     </div>
     <hr class="border-solid-down" />
     <div class="search">
-      <%= render partial: "categories/select", locals: {categories: @category_all} %>
+      <div class="input-group">
+        <%= form_with(url: search_categories_path, method: :post, local: true) do |f| %>
+          <%= f.select :category_id, categories_list(@category_all), {include_blank: "キーワードからお店を検索してみよう", class: "form-control"} %>
+          <%= f.submit "検索" %>
+        <% end %>
+      </div>
     </div>
     <div class="category">
       <%= link_to categories_path, class: "btn-gradient-radius-orange" do%>
@@ -910,7 +925,7 @@
       <div class="col-sm-12">
         <div class="trial_plan">
             <div>
-              <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_plan_path, class: "btn btn-link box2" %></span>
+              <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_shop_path, class: "btn btn-link box2" %></span>
             <div>
         </div>
       </div>
@@ -1288,7 +1303,12 @@
   <% else %> <%# ログインしてない %>
     <hr class="border-solid-down" />
     <div class="search">
-      <%= render partial: "categories/select", locals: {categories: @category_all} %>
+      <div class="input-group">
+        <%= form_with(url: search_categories_path, method: :post, local: true) do |f| %>
+          <%= f.select :category_id, categories_list(@category_all), {include_blank: "キーワードからお店を検索してみよう", class: "form-control"} %>
+          <%= f.submit "検索" %>
+        <% end %>
+      </div>
     </div>
     <div class="category">
       <%= link_to categories_path, class: "btn-gradient-radius-orange" do%>
@@ -1316,7 +1336,7 @@
       <div class="col-sm-12">
         <div class="trial_plan">
             <div>
-              <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_plan_path, class: "btn btn-link box2" %></span>
+              <span class="box1"><%= link_to "１週間３食１０００円のバナーが入る", trial_shop_path, class: "btn btn-link box2" %></span>
             <div>
         </div>
       </div>

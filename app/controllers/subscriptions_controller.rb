@@ -19,9 +19,8 @@ class SubscriptionsController < ApplicationController
   end
 
   def subscription_all_shop
-    @subscriptions = Subscription.where(admin_last_check: "加盟承認審査済み")
+    @subscriptions = Subscription.where(admin_last_check: "加盟承認審査済み").paginate(page: params[:page], per_page: 5)
     @subscriptions_count = Subscription.where(admin_last_check: "加盟承認審査済み").count
-    @subscriptions = Subscription.all
     if current_user.present?
       current_user.update!(select_trial: false)  if current_user.plan_canceled || (!current_user.trial_stripe_success && current_user.select_trial)
     end
@@ -94,7 +93,11 @@ class SubscriptionsController < ApplicationController
     @subscription = Subscription.new(subscription_params)
     respond_to do |format|
       if @subscription.save
-	      @subscription.update(ordinal: Subscription.count)
+        if current_owner.admin_check == "加盟店承認済み"
+          @subscription.update!(situation: "加盟店承認済み", admin_last_check: "加盟承認審査済み", ordinal: Subscription.count)
+        elsif current_owner.admin_check == "加盟店否認済み"
+          @subscription.update!(situation: "加盟店否認済み", admin_last_check: "加盟店否認済み", ordinal: Subscription.count)
+        end
         SubscriptionMailer.with(subscription: @subscription, new: "true").notification_email.deliver_now
         format.html { render :subscription_judging, notice: '加盟店サブスクショップの審査申請しました' }
         format.json { render :show, status: :created, location: @subscription }
@@ -110,7 +113,6 @@ class SubscriptionsController < ApplicationController
     @categories = Category.all
     @subscription.images.build
     @instablog = Instablog.new
-    @pays = Stripe::Plan.list
   end
 
   # PATCH/PUT /subscriptions/1
@@ -132,13 +134,13 @@ class SubscriptionsController < ApplicationController
   # DELETE /subscriptions/1
   # DELETE /subscriptions/1.json
   def destroy
-    
+
     targets = Subscription.where(ordinal: (@subscription.ordinal + 1)..Float::INFINITY)
 
     targets.each do |target|
       target.update(ordinal: target.ordinal - 1)
     end
-	  
+
     @subscription.destroy
     respond_to do |format|
       format.html { redirect_to owner_subscriptions_url(owner_id: @owner.id), notice: 'サブスクショップを削除しました' }
@@ -167,7 +169,7 @@ class SubscriptionsController < ApplicationController
           category_id: @subscription.category_id,
           issue_ticket_day: Date.today,
           user_id: current_user.id,
-        ) 
+        )
       else
         ticket = Ticket.create!(
           owner_name: @owner.name,
@@ -179,7 +181,7 @@ class SubscriptionsController < ApplicationController
           category_id: @subscription.category_id,
           issue_ticket_day: Date.today,
           user_id: current_user.id,
-        ) 
+        )
       end
       redirect_to user_ticket_url(ticket, user_id: current_user.id)
       SubscriptionMailer.with(id: current_user.id, subscription_id: @subscription.id).takeout_email.deliver_now
